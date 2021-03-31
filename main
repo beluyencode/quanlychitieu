@@ -1,0 +1,183 @@
+import java.io.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class main {
+        public static void main(String[] args) throws IOException {
+        Scanner sc = new Scanner(System.in);
+
+        LocalDate month = LocalDate.now();
+        List<chiTieu> list = new ArrayList<>();
+        FileInputStream fileInputStream =null;
+        ObjectInputStream objectInputStream = null;
+        FileOutputStream fileOutputStream = null;
+        ObjectOutputStream objectOutputStream = null;
+        int soLanDungTien ;
+        int choose ;
+        if (true){
+            try {
+                fileInputStream = new FileInputStream("ChiTieu.txt");
+                objectInputStream = new ObjectInputStream(fileInputStream);
+                list = (List<chiTieu>) objectInputStream.readObject();
+
+            }catch (Exception e){
+                e.printStackTrace();}
+
+            finally {
+                if (fileInputStream != null){
+                    fileInputStream.close();
+                }
+                if (objectInputStream != null){
+                    objectInputStream.close();
+                }
+            }
+            do {
+                menu();
+                choose = sc.nextInt();
+                switch (choose){
+                    case 1:
+                        System.out.println("So lan dung tien trong ngay :");
+                        soLanDungTien = sc.nextInt();
+                        for (int i = 0 ; i < soLanDungTien ; i++){
+                            chiTieu chiTieu= new chiTieu();
+                            chiTieu.inputall();
+                            list.add(chiTieu);
+                        }
+                        break;
+                    case 2:
+                        System.out.println("Chuc nang nay se co sau<3");
+                        break;
+
+
+                    case 3:
+                        int sumMDTT = 0;
+                        System.out.println("Nhap thang muon ban muon xem :");
+                        int searchMonth = sc.nextInt();
+                        sc.nextLine();
+                        System.out.println("Nhap muc dich dung tien ban muon xem :");
+                        String searchMDTT = sc.nextLine();
+                        menuThongKe();
+                        for (int i = 0 ; i < list.size() ; i++){
+                            if (searchMonth == list.get(i).getMonth()
+                                    && searchMDTT.equals(list.get(i).getMucDichDungTien())) {
+                                sumMDTT +=  list.get(i).getMoney();
+                                System.out.println(list.get(i).getDate()+"\t\t\t"+list.get(i).getMoney()+"\t\t\t"+"\t"+
+                                        list.get(i).getMucDichDungTien());
+                            }
+
+                        }
+                        System.out.println("Tong so tien ban da dung la :"+sumMDTT);
+
+
+                        break;
+
+
+                    case 4:
+                        menuThongKe();
+                        for (int i = 1 ; i < list.size() ; i++){
+                            if (java.time.LocalDate.now().equals(list.get(i).getDate())){
+                                System.out.println(list.get(i).getDate()+"\t\t\t"+list.get(i).getMoney()+"\t\t\t"+"\t"+
+                                        list.get(i).getMucDichDungTien());
+                            }
+                        }
+                        int sumNgay = 0;
+                        for (int i = 1 ; i < list.size() ; i++){
+                            if (java.time.LocalDate.now().equals(list.get(i).getDate())){
+                                sumNgay += list.get(i).getMoney();
+                            }
+                        }
+                        System.out.println("Tong so tien tieu trong ngay la :"+sumNgay);
+                        break;
+                    case 5:
+                        System.out.println("Nhap thang muon xem : ");
+                        int thang = sc.nextInt();
+                        menuThongKe();
+                        int sumThang = 0;
+                        if (thang>0&&thang<=12){
+                            for (int i = 1 ; i < list.size() ; i++ ){
+                                if (thang == list.get(i).getMonth()){
+                                    System.out.println(list.get(i).getDate()+"\t\t\t"+list.get(i).getMoney()+"\t\t\t"+"\t"+
+                                            list.get(i).getMucDichDungTien());
+                                    sumThang += list.get(i).getMoney();
+
+                                }
+                            }
+                        }else System.out.println("Thang nhap khong hop le");
+                        System.out.println("So tien da tieu trong thang la: "+sumThang);
+                        break;
+                    case 6:
+                        int sumAll = 0;
+                        int[] tenthang = {1,2,3,4,5,6,7,8,9,10,11,12};
+                        for (int i :tenthang){
+                            System.out.println("thang "+ i+" :");
+                            menuThongKe();
+                            for (int j = 0 ; j < list.size() ; j++){
+                                if (i == list.get(j).getMonth()){
+                                    System.out.println(list.get(j).getDate()+"\t\t\t"+list.get(j).getMoney()+"\t\t\t"
+                                            +"\t"+ list.get(j).getMucDichDungTien());
+                                    sumAll += list.get(j).getMoney();
+                                }
+                            }
+
+                        }
+                        System.out.println("tong so tien ban da tieu la : "+sumAll);
+                        break;
+                    case 7:
+                        try {
+                            fileOutputStream = new FileOutputStream("ChiTieu.txt");
+                            objectOutputStream = new ObjectOutputStream(fileOutputStream);
+                            objectOutputStream.writeObject(list);
+                        }catch (FileNotFoundException e){
+                            e.printStackTrace();
+                        }finally {
+                            if (fileOutputStream != null){
+                                fileOutputStream.close();
+                            }
+                            if (objectOutputStream != null){
+                                objectOutputStream.close();
+                            }
+                        }
+                    case 0:try {
+                        fileOutputStream = new FileOutputStream("ChiTieu.txt");
+                        objectOutputStream = new ObjectOutputStream(fileOutputStream);
+                        objectOutputStream.writeObject(list);
+                    }catch (FileNotFoundException e){
+                        e.printStackTrace();
+                    }finally {
+                        if (fileOutputStream != null){
+                            fileOutputStream.close();
+                        }
+                        if (objectOutputStream != null){
+                            objectOutputStream.close();
+                        }
+                    }System.out.println("Good bye <3");
+                    break;
+                    default:
+                        System.out.println("Lua chon khong hop le");
+                }
+            }while (choose != 0);
+        }
+
+
+    }
+
+    public static void menu (){
+        System.out.println("=================QuanLyChiTieu-1.1.0==================");
+        System.out.println("1. So tien da dung trong ngay");
+        System.out.println("2. Tim kiem chi tieu theo ngay (comming soon)");
+        System.out.println("3. Tim kiem chi tieu theo muc dich dung");
+        System.out.println("4. Tong so tien da dung trong ngay");
+        System.out.println("5. Tong so tien da dung trong thang");
+        System.out.println("6. Lich su chi tieu");
+        System.out.println("7. Save");
+        System.out.println("0. Thoat + Save");
+        System.out.println("====================EditByPVLong======================");
+        System.out.println("Hay nhap yeu cau cua ban (0-7) :");
+    }
+    public static void menuThongKe(){
+        System.out.println("Ngay\t\t\t"+"So tien da dung\t\t\t"+"     Muc dich dung");
+
+    }
+}
